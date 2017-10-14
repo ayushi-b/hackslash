@@ -18,26 +18,6 @@ def display(image, name):
     return
 
 
-def sliding_window(image, stepSize, windowSize):
-    # slide a window across the image
-    for x in range(0, image.shape[0], stepSize):
-        for y in range(0, image.shape[1], stepSize):
-            # yield the current window
-            yield (x, y, image[x:x + windowSize[0], y:y + windowSize[1]])
-
-
-def window_process(image):
-    # Define the window size
-    windowsize_r = 5
-    windowsize_c = 5
-
-    # Crop out the window and calculate the histogram
-    for r in range(0, image.shape[0] - windowsize_r, windowsize_r):
-        for c in range(0, image.shape[1] - windowsize_c, windowsize_c):
-            window = image[r:r + windowsize_r, c:c + windowsize_c]
-            print(window)
-
-
 if __name__ == '__main__':
 
     # img = 'img2.jpeg'
@@ -51,11 +31,12 @@ if __name__ == '__main__':
                                   cv2.THRESH_BINARY, 21, 10)
     display(integ, 'img2')
 
-    max_val = min(shape[0], shape[1])
+    sh = integ.shape
+    max_val = min(sh[0], sh[1])
     min_size = max_val/30
-    for x in range(0, max_val/2):
+    for x in range(0, max_val//2):
         i = x*min_size
-        for y in range(0, max_val/2):
+        for y in range(0, max_val//2):
             j = y*min_size
 
 
