@@ -8,18 +8,25 @@ import sys
 
 def vertical_segmentation(base_path, n_lines):
 
-    f = open("MUSOC.txt", "w+")
+    f = open("results.txt", "w+")
 
     for i in range(n_lines):
+
         img = cv2.imread(base_path + 'part' + str(i) + '.jpg')
         rows, cols, w = img.shape
 
         gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # threshold at 200
         ret, threshold = cv2.threshold(gray_image, 200, 255, cv2.THRESH_BINARY)
+        # cv2.imshow('threshold', threshold)
+        # cv2.waitKey(0)
 
-        # dilating
+        # dilating -
+        # print(threshold.shape)
         kernel = np.ones((100, 10), np.uint8)
         dilation = cv2.dilate(threshold, kernel, iterations=1)
+        # cv2.imshow('Dilation', dilation)
+        # cv2.waitKey(0)
 
         cv2.imwrite(base_path + 'dilatedpart.jpg', dilation)
         k = cv2.imread(base_path + 'dilatedpart.jpg')
@@ -30,7 +37,7 @@ def vertical_segmentation(base_path, n_lines):
 
         m = []
         minLineLength = 100
-        maxLineGap = 10
+        maxLineGap = 25
         lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 15, minLineLength, maxLineGap)
         for x in range(0, len(lines)):
             for x1, y1, x2, y2 in lines[x]:
@@ -172,6 +179,11 @@ def vertical_segmentation(base_path, n_lines):
                     RD = xyz_r(pxl[i])
                     LD = xyz_l(pxl[i])
 
+                    if RD is None:
+                        RD = 0
+                    if LD is None:
+                        LD = 0
+
                     h1, w1 = pxl[i].shape[:2]
                     black_image = np.zeros((pxl[i].shape[0], 42 - pxl[i].shape[1], 3))
                     h2, w2 = black_image.shape[:2]
@@ -182,7 +194,11 @@ def vertical_segmentation(base_path, n_lines):
                         # combine 2 images
                         vis[:h1, :w1, :3] = pxl[i]
                         vis[:h2, w1:w1 + w2, :3] = black_image
-                        resized_image = cv2.resize(vis, (40, 40))
+                        # print('\n\n',  vis.shape, '\n\n')
+                        try:
+                            resized_image = cv2.resize(vis, (40, 40))
+                        except:
+                            resized_image = vis
                         pxl[i] = resized_image
                         rows, cols, w = pxl[i].shape
                         for x in range(rows):
@@ -194,7 +210,10 @@ def vertical_segmentation(base_path, n_lines):
                     elif LD > RD:
                         vis[:h2, :w2, :3] = black_image
                         vis[:h1, w2:w1 + w2, :3] = pxl[i]
-                        resized_image = cv2.resize(vis, (40, 40))
+                        try:
+                            resized_image = cv2.resize(vis, (40, 40))
+                        except:
+                            resized_image = vis
                         pxl[i] = resized_image
                         rows, cols, w = pxl[i].shape
                         for x in range(rows):
@@ -248,7 +267,11 @@ def vertical_segmentation(base_path, n_lines):
                             pxl[i] = resized_image
 
         for i in range(len(pxl)):
-            resized_image = cv2.resize(pxl[i], (40, 50))
+            # print('\n\n', pxl[i].shape, '\n\n')
+            try:
+                resized_image = cv2.resize(pxl[i], (40, 50))
+            except:
+                resized_image = pxl[i]
             pxl[i] = resized_image
 
         w = []
@@ -272,7 +295,6 @@ def vertical_segmentation(base_path, n_lines):
                         dic[str(x)].append((j, i))
             return 0
 
-
         for x in range(len(pxl)):
             result = contains_white(pxl[x], x)
 
@@ -282,7 +304,7 @@ def vertical_segmentation(base_path, n_lines):
         # end_pts contain the coordinates of 1st and last white pixel in the image
         end_pts = []
         for i in range(len(pxl)):
-            if (len(dic[str(i)]) != 0):
+            if len(dic[str(i)]) != 0:
                 end_pts.append((dic[str(i)][0], (dic[str(i)][len(dic[str(i)]) - 1])))
             else:
                 end_pts.append(())
@@ -344,12 +366,12 @@ def vertical_segmentation(base_path, n_lines):
         for i in range(1, len(cvt)):
             try:
                 if cvt[i - 1] == d['numbers']:
-                    f.write(n.keys()[n.values().index(cvt[i])])
+                    f.write(list(n.keys())[list(n.values()).index(cvt[i])])
                     continue
 
                 elif cvt[i - 1] == d['capital']:
-                    z = string.lowercase.index(alpha.keys()[alpha.values().index(cvt[i])])
-                    f.write(string.uppercase[z])
+                    z = string.ascii_lowercase.index(list(alpha.keys())[list(alpha.values()).index(cvt[i])])
+                    f.write(string.ascii_uppercase[z])
                     continue
 
                 else:

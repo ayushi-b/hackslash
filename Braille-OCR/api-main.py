@@ -17,14 +17,18 @@ class MainHandler(tornado.web.RequestHandler):
 
         image_id = self.get_argument("img")
         token = self.get_argument("token")
-        url = 'https://firebasestorage.googleapis.com/v0/b/hackusit-1eb06.appspot.com/o/images%2{}.jpg?alt=media&token={}'.format(image_id,token)
-        print("URL OF IMAGE:-\n"+url + '\n\n')
+        url = 'https://firebasestorage.googleapis.com/v0/b/hackusit-1eb06.appspot.com/o/'
+        url += 'images%2{}.jpg?alt=media&token={}'.format(image_id, token)
+
         url_response = requests.get(url).content
         img_array = np.array(bytearray(url_response), dtype=np.uint8)
         img = cv2.imdecode(img_array, -1)
         cv2.imwrite('braille_scan.jpg',img)
         print("TEXT EXTRACTED:- ")
-        self.write(main())
+        response = {
+            'result': main(),
+        }
+        self.write(response)
         # return url
 
 # ([A-Z a-z 0-9 . / % " $ & + , : ; = ? @ # | <> . ^ * () % ! - ]+)

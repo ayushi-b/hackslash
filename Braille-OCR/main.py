@@ -21,13 +21,13 @@ def main():
             print('{} not deleted. \n'.format(file))
             continue
 
-    # ip_image_path = 'braille_scan.jpg'
-    ip_image_path = '/Users/ayushi/Desktop/uhack/Messages Image(2445393441).jpeg'
+    ip_image_path = 'braille_scan.jpg'
+    # ip_image_path = '/Users/ayushi/Desktop/uhack/braille_scan.jpg'
 
     try:
-        os.remove('MUSOC.txt')
+        os.remove('results.txt')
     except FileNotFoundError:
-        pass
+        print('results file not found.')
 
     preprocessed_image = base_path + 'preprecessed.jpg'
 
@@ -36,11 +36,22 @@ def main():
 
     n_lines = horizontal_segmentation(base_path, preprocessed_image)
     vertical_segmentation(base_path, n_lines)
+
+    file = open('results.txt', 'r')
+    text = file.read()
+    file.close()
+    print(text)
+
     error_removal()
 
-    file = open('MUSOC.txt', 'r')
+    file = open('results.txt', 'r')
     text = file.read()
+    file.close()
     print(text)
+
     print(time() - t)
     return text
+
+if __name__ == '__main__':
+    main()
 

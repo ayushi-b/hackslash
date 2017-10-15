@@ -3,12 +3,12 @@ from textblob import Word
 
 
 def error_removal():
-    f = open("MUSOC.txt", "a+")
-    with open("MUSOC.txt", "r") as fp:
+    f = open("results.txt", "a+")
+    with open("results.txt", "r") as fp:
         content = fp.read()
     blob = TextBlob(content)
     p = (blob.correct())
-    open("MUSOC.txt", "w+")
+    open("results.txt", "w+")
     f.write(str(p))
     f.close()
 

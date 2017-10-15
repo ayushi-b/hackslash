@@ -11,21 +11,25 @@ def preprocess(base_path, input_image_path, output_image_path):
     img = 255 - img
 
     ret, thresh = cv2.threshold(img, 120, 255, cv2.THRESH_BINARY)
+    cv2.imwrite(base_path + 'threshold1.jpg', thresh)
     blur = cv2.blur(thresh, (5, 5))
+    cv2.imwrite(base_path + 'blur.jpg', blur)
 
     kernel = np.ones((5, 5), np.uint8)
     erosion = cv2.erode(blur, kernel, iterations=1)
+    cv2.imwrite(base_path + 'erosion.jpg', erosion)
     ret, thresh2 = cv2.threshold(erosion, 12, 255, cv2.THRESH_BINARY)
+    cv2.imwrite(base_path + 'threshold2.jpg', thresh2)
 
     kernel = np.ones((3, 2), np.uint8)
     mask = cv2.dilate(thresh2, kernel, iterations=1)
+    cv2.imwrite(base_path + 'dilate.jpg', mask)
 
     rows, cols = mask.shape
-    cv2.imwrite(base_path + 'mask.jpg', mask)
 
     # cropping
     # refPt = []
-    cropping = True
+    # cropping = True
 
     # def click_and_crop(event, x, y, flags, param):
     #         global refPt, cropping
@@ -52,7 +56,7 @@ def preprocess(base_path, input_image_path, output_image_path):
 
 
     # load the image, clone it, and setup the mouse callback function
-    clone = mask.copy()
+    # clone = mask.copy()
     cv2.namedWindow("image", cv2.WINDOW_NORMAL)
     cv2.resizeWindow('image', rows, cols)
     # cv2.setMouseCallback("image", click_and_crop)
@@ -78,7 +82,7 @@ def preprocess(base_path, input_image_path, output_image_path):
     #         roi = clone[refPt[0][1]:refPt[1][1], refPt[0][0]:refPt[1][0]]
     cv2.imwrite(output_image_path, mask)
 
-    cv2.namedWindow("ROI", cv2.WINDOW_NORMAL)
+    cv2.namedWindow("preprocessed_image", cv2.WINDOW_NORMAL)
     # cv2.resizeWindow('ROI',refPt[0][1]-refPt[1][1], refPt[0][0]-refPt[1][0] )
     # cv2.imshow("ROI", mask)
 
