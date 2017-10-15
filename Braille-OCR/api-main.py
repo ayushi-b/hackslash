@@ -17,10 +17,12 @@ class MainHandler(tornado.web.RequestHandler):
 
         image_id = self.get_argument("img")
         token = self.get_argument("token")
+        ext = self.get_argument("format")
         url = 'https://firebasestorage.googleapis.com/v0/b/hackusit-1eb06.appspot.com/o/'
-        url += 'images%2{}.jpg?alt=media&token={}'.format(image_id, token)
-
+        url += 'images%2{}.{}?alt=media&token={}'.format(image_id, ext, token)
+        print(url)
         url_response = requests.get(url).content
+        print(url_response)
         img_array = np.array(bytearray(url_response), dtype=np.uint8)
         img = cv2.imdecode(img_array, -1)
         cv2.imwrite('braille_scan.jpg',img)

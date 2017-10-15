@@ -11,7 +11,7 @@ import os
 def main():
 
     t = time()
-
+    text = "Agar shi chala toh ye nhi dikhega Bidu"
     base_path = 'temp_images/'
 
     for file in os.listdir(base_path):
@@ -31,24 +31,32 @@ def main():
 
     preprocessed_image = base_path + 'preprecessed.jpg'
 
-    preprocess(base_path, ip_image_path, preprocessed_image)
+    try:
+        preprocess(base_path, ip_image_path, preprocessed_image)
+    except Exception as e:
+        print(e)
+
     # preprocessing(ip_image_path, preprocessed_image)
+    try:
+        n_lines = horizontal_segmentation(base_path, preprocessed_image)
+        vertical_segmentation(base_path, n_lines)
+    except Exception as e:
+        print(e)
 
-    n_lines = horizontal_segmentation(base_path, preprocessed_image)
-    vertical_segmentation(base_path, n_lines)
+    try:
+        file = open('results.txt', 'r')
+        text = file.read()
+        file.close()
+        print(text)
 
-    file = open('results.txt', 'r')
-    text = file.read()
-    file.close()
-    print(text)
+        error_removal()
 
-    error_removal()
-
-    file = open('results.txt', 'r')
-    text = file.read()
-    file.close()
-    print(text)
-
+        file = open('results.txt', 'r')
+        text = file.read()
+        file.close()
+        print(text)
+    except Exception as e:
+        print(e)
     print(time() - t)
     return text
 
